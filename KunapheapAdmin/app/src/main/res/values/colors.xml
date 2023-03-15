@@ -11,4 +11,12 @@
     <color name="primary">#7FB77E</color>
     <color name="secondary">#252525</color>
     <color name="third">#FEFBF3</color>
+    <color name="tool_bar_color">#fff</color>
+    <color name="drawer_bg">#189A7C</color>
+
+    <color name="colorPrimary">#fff</color>
+    <color name="colorPrimaryDark">#fff</color>
+    <color name="colorAccent">#448AFF</color>
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#757575</color>
 </resources>
