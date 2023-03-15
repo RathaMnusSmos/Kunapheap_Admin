@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Kunapheap Admin</string>
+
+    <string-array name="ld_activityScreenTitles">
+        <item> </item>
+        <item>Dashboard</item>
+        <item>My Account</item>
+        <item>Messages</item>
+        <item>Setting</item>
+        <item />
+        <item>Log Out</item>
+    </string-array>
+
+    <array name="ld_activityScreenIcons">
+        <item>@drawable/baseline_close_24</item>
+        <item>@drawable/baseline_home_24</item>
+        <item>@drawable/baseline_account_circle_24</item>
+        <item>@drawable/baseline_near_me_24</item>
+        <item>@drawable/baseline_settings_24</item>
+        <item>0</item>
+        <item>@drawable/baseline_logout_24</item>
+    </array>
 </resources>

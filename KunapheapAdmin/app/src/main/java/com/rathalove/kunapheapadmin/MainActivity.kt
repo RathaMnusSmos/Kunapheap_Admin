@@ -1,9 +1,11 @@
 package com.rathalove.kunapheapadmin
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import com.rathalove.kunapheapadmin.Activity.HomeActivity
 import com.rathalove.kunapheapadmin.databinding.ActivityMainBinding
 import java.util.regex.Pattern
 
@@ -24,8 +26,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_main)
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
-        binding.mainActivity = this;
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.mainActivity = this
 
         binding.btnLogIn.setOnClickListener{
             validatePass()
@@ -36,6 +38,8 @@ class MainActivity : AppCompatActivity() {
             else{
                 var username = binding.usernameEdt.text.toString()
                 var password = binding.passwordEdt.text.toString()
+                var intent = Intent(this@MainActivity, HomeActivity::class.java)
+                startActivity(intent)
 
             }
         }
