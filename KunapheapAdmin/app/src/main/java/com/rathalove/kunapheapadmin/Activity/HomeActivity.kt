@@ -1,12 +1,22 @@
 package com.rathalove.kunapheapadmin.Activity
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
+import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +37,9 @@ class HomeActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
     private var screenTitles: Array<String> = arrayOf()
     private var screenIcons: Array<Drawable?> = arrayOf()
     private var slidingRootNav: SlidingRootNav? = null
+
+
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +75,10 @@ class HomeActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = adapter
         adapter.setSelected(POS_DASHBOARD)
+
+
+
+
     }
 
     override fun onItemSelected(position: Int) {
