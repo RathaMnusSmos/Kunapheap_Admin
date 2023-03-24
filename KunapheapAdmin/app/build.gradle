@@ -69,4 +69,10 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+
+    //notify notification
+    implementation 'com.github.isradeleon:Notify-Android:1.0.5' // updated for Android X
+
+
+
 }

@@ -25,11 +25,13 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.application.isradeleon.notify.Notify
 import com.rathalove.kunapheapadmin.API.RetrofitClientInstance
 import com.rathalove.kunapheapadmin.API.RetrofitInterface
 import com.rathalove.kunapheapadmin.ActionListener.OnclickListener
 import com.rathalove.kunapheapadmin.Adapter.ItemAdapter
 import com.rathalove.kunapheapadmin.DataModel.AllItemData.AllItemData
+import com.rathalove.kunapheapadmin.DataModel.AllProductData.AllProductData
 import com.rathalove.kunapheapadmin.R
 import com.rathalove.kunapheapadmin.databinding.DashbaordFragmentBinding
 import retrofit2.Call
@@ -54,6 +56,7 @@ class DashBoardFragment: Fragment(), OnclickListener {
     private var allItemData: LinkedList<AllItemData> = LinkedList()
     private lateinit var allItemRec: RecyclerView
     private lateinit var fragmentBinding :DashbaordFragmentBinding
+    private var allProductData: LinkedList<AllProductData> = LinkedList()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,6 +70,15 @@ class DashBoardFragment: Fragment(), OnclickListener {
         getAllItem()
 
         //==========================Notification ================================
+
+//        getAllProductData()
+//        Log.d("testdata = ", "${getAllProductData()}")
+
+
+        getAllDataSycn()
+
+        Log.d("testdata = ", "${getAllDataSycn()}")
+
 
 
 
@@ -95,10 +107,47 @@ class DashBoardFragment: Fragment(), OnclickListener {
                             }
                         }
                     }
-
                     var itemListAdapter = ItemAdapter(requireContext(), allItemData, this@DashBoardFragment)
                     allItemRec.adapter = itemListAdapter
 
+                    //check and push notification
+                    for(i in allItemData){
+                        if (i.itemAmount!!.toInt() <= 3){
+                            Notify.build(requireContext().getApplicationContext())
+
+                                /*
+                                 * Set notification title and content
+                                 * */
+                                .setTitle("Jill Zhao")
+                                .setContent("Hi! So I meet you today?")
+
+                                /*
+                                 * Set small icon from drawable resource
+                                 * */
+                                .setSmallIcon(R.drawable.baseline_notifications_none_24)
+                                .setColor(R.color.colorAccent)
+
+                                /*
+                                 * Set notification large icon from drawable resource or URL
+                                 * (make sure you added INTERNET permission to AndroidManifest.xml)
+                                 * */
+                                .setLargeIcon("https://images.pexels.com/photos/139829/pexels-photo-139829.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150&w=440")
+
+                                /*
+                                 * Circular large icon
+                                 * */
+                                .largeCircularIcon()
+
+                                /*
+                                 * Add a picture from drawable resource or URL
+                                 * (INTERNET permission needs to be added to AndroidManifest.xml)
+                                 * */
+                                .setPicture("https://images.pexels.com/photos/1058683/pexels-photo-1058683.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
+
+                                .show(); // Show notification
+
+                        }
+                    }
 
                 }
             }
@@ -108,6 +157,56 @@ class DashBoardFragment: Fragment(), OnclickListener {
             }
 
         })
+    }
+
+//    private fun getAllProductData(): LinkedList<AllProductData>{
+//        var retrofit = RetrofitClientInstance.getRetrofitInstance().create(RetrofitInterface::class.java)
+//        retrofit.getProductData().enqueue(object : Callback<ArrayList<AllProductData>>{
+//            override fun onResponse(
+//                call: Call<ArrayList<AllProductData>>,
+//                response: Response<ArrayList<AllProductData>>
+//            ) {
+//               if (response.isSuccessful){
+//                   for (i in response.body()!!){
+//                       allProductData.add(i)
+//                   }
+//                   Log.d("product_data", " product data = $allProductData")
+//
+//               }
+//
+//                else{
+//                    Log.d("error", "Something went wrong ")
+//               }
+//
+//                Log.d("product_data2222", " product data = $allProductData")
+//            }
+//
+//            override fun onFailure(call: Call<ArrayList<AllProductData>>, t: Throwable) {
+//                Log.d("fail", "${t.message}")
+//            }
+//
+//        })
+//
+//
+//        return allProductData
+//
+//    }
+
+    private fun getAllDataSycn(): LinkedList<AllProductData>{
+        var retrofit = RetrofitClientInstance.getRetrofitInstance().create(RetrofitInterface::class.java)
+        var data : Call<ArrayList<AllProductData>> = retrofit.getProductData()
+        try {
+            var response :Response<ArrayList<AllProductData>> = data.execute()
+            for (i in response.body()!!){
+                allProductData.add(i)
+            }
+            Log.d("block 1 = " , "$allProductData")
+        }
+        catch (e: Exception){
+            e.printStackTrace()
+        }
+        Log.d("block 2 = " , "$allProductData")
+        return allProductData
     }
 
     override fun noItemClick(pos: Int, data: AllItemData) {
