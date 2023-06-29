@@ -6,12 +6,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.rathalove.kunapheapadmin.Activity.HomeActivity
+import com.rathalove.kunapheapadmin.RoomData.UserLogIn.UserDao
+import com.rathalove.kunapheapadmin.RoomData.UserLogIn.UserData
+import com.rathalove.kunapheapadmin.RoomData.UserLogIn.UserDatabase
 import com.rathalove.kunapheapadmin.databinding.ActivityMainBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding:ActivityMainBinding
-
+    private lateinit var binding: ActivityMainBinding
+    private val userDatabase: UserDatabase by lazy { UserDatabase.getDatabase(this) }
     private var PASSWORD_PARTTERN: Pattern = Pattern.compile(
         "^" +
                 //"(?=.*[0-9])" +         //at least 1 digit
@@ -29,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.mainActivity = this
 
+
         binding.btnLogIn.setOnClickListener{
             validatePass()
             validateUsername()
@@ -38,8 +45,33 @@ class MainActivity : AppCompatActivity() {
             else{
                 var username = binding.usernameEdt.text.toString()
                 var password = binding.passwordEdt.text.toString()
-                var intent = Intent(this@MainActivity, HomeActivity::class.java)
-                startActivity(intent)
+
+                if(username.equals("admin1") && password.equals("admin1")){
+                    var userData = UserData("admin1","admin1" )
+                   GlobalScope.launch (Dispatchers.IO){
+                       val id = userDatabase.userDao().insertNewUser(userData)
+                       launch (Dispatchers.Main){
+                           var intent = Intent(this@MainActivity, HomeActivity::class.java)
+                           startActivity(intent)
+                       }
+
+                   }
+
+                }
+                else if (username.equals("admin2") && password.equals("admin2")){
+                    var userData = UserData("admin2","admin2" )
+                    GlobalScope.launch (Dispatchers.IO){
+                        val id = userDatabase.userDao().insertNewUser(userData)
+                        launch (Dispatchers.Main){
+                            var intent = Intent(this@MainActivity, HomeActivity::class.java)
+                            startActivity(intent)
+                        }
+
+                    }
+                }
+
+
+
 
             }
         }

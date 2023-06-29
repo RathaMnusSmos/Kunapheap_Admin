@@ -1,35 +1,33 @@
 package com.rathalove.kunapheapadmin.Activity
 
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rathalove.kunapheapadmin.Fragment.AddProductFragment
+import com.rathalove.kunapheapadmin.Fragment.DashboardFragment
 import com.rathalove.kunapheapadmin.Util.Components.drawerMenu.DrawerAdapter
 import com.rathalove.kunapheapadmin.Util.Components.drawerMenu.DrawerItem
 import com.rathalove.kunapheapadmin.Util.Components.drawerMenu.SimpleItem
 import com.rathalove.kunapheapadmin.Util.Components.drawerMenu.SpaceItem
-import com.rathalove.kunapheapadmin.Fragment.DashBoardFragment
+import com.rathalove.kunapheapadmin.Fragment.ProductList
 import com.rathalove.kunapheapadmin.Fragment.SettingFragment
+import com.rathalove.kunapheapadmin.MainActivity
 import com.rathalove.kunapheapadmin.R
+import com.rathalove.kunapheapadmin.RoomData.UserLogIn.UserDatabase
 import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Suppress("INACCESSIBLE_TYPE")
@@ -38,7 +36,7 @@ class HomeActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
     private var screenIcons: Array<Drawable?> = arrayOf()
     private var slidingRootNav: SlidingRootNav? = null
 
-
+    private val userDatabase: UserDatabase by lazy { UserDatabase.getDatabase(this) }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,9 +57,9 @@ class HomeActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
             DrawerAdapter(
                 Arrays.asList(
                     createItemFor(POS_CLOSE).setChecked(false),
-                    createItemFor(POS_DASHBOARD).setChecked(true),
-                    createItemFor(POS_ACCOUNT),
-                    createItemFor(POS_MESSAGES),
+                    createItemFor(POS_PRODUCTLIST).setChecked(true),
+                    createItemFor(POS_DASHBOARD),
+                    createItemFor(POS_ADDPRODUCT),
                     createItemFor(POS_SETTING),
                     SpaceItem(
                         48
@@ -74,8 +72,7 @@ class HomeActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
         list.isNestedScrollingEnabled = false
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = adapter
-        adapter.setSelected(POS_DASHBOARD)
-
+        adapter.setSelected(POS_PRODUCTLIST)
 
 
 
@@ -84,15 +81,31 @@ class HomeActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
     override fun onItemSelected(position: Int) {
         var transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (position == POS_LOGOUT) {
-            finish()
+            GlobalScope.launch(Dispatchers.IO){
+                var user = userDatabase.userDao().getAllUser()
+                var dele = userDatabase.userDao().deleteUser(user[0])
+                launch (Dispatchers.Main){
+                    var intent = Intent(this@HomeActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+            }
         }
-        else if (position == POS_DASHBOARD){
-            var dashBoardFragment = DashBoardFragment()
-            transaction.replace(R.id.container, dashBoardFragment)
+        else if (position == POS_PRODUCTLIST){
+            var productlistFragment = ProductList()
+            transaction.replace(R.id.container, productlistFragment)
         }
         else if (position == POS_SETTING){
             var settingFragment = SettingFragment()
             transaction.replace(R.id.container, settingFragment)
+        }
+        else if(position == POS_ADDPRODUCT){
+            var addproduct = AddProductFragment()
+            transaction.replace(R.id.container, addproduct)
+        }
+        else if(position == POS_DASHBOARD){
+            var dashboardFragment = DashboardFragment()
+            transaction.replace(R.id.container, dashboardFragment)
         }
 
         slidingRootNav!!.closeMenu()
@@ -141,9 +154,9 @@ class HomeActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
 
     companion object {
         private const val POS_CLOSE = 0
-        private const val POS_DASHBOARD = 1
-        private const val POS_ACCOUNT = 2
-        private const val POS_MESSAGES = 3
+        private const val POS_PRODUCTLIST = 1
+        private const val POS_DASHBOARD = 2
+        private const val POS_ADDPRODUCT = 3
         private const val POS_SETTING = 4
         private const val POS_LOGOUT = 6
     }

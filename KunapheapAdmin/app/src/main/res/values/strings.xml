@@ -4,9 +4,9 @@
 
     <string-array name="ld_activityScreenTitles">
         <item> </item>
+        <item>Product List</item>
         <item>Dashboard</item>
-        <item>My Account</item>
-        <item>Messages</item>
+        <item>Add Product</item>
         <item>Setting</item>
         <item />
         <item>Log Out</item>
@@ -14,19 +14,21 @@
 
     <array name="ld_activityScreenIcons">
         <item>@drawable/baseline_close_24</item>
-        <item>@drawable/baseline_home_24</item>
-        <item>@drawable/baseline_account_circle_24</item>
-        <item>@drawable/baseline_near_me_24</item>
+        <item>@drawable/baseline_production_quantity_limits_24</item>
+        <item>@drawable/baseline_auto_graph_24</item>
+        <item>@drawable/baseline_dashboard_customize_24</item>
         <item>@drawable/baseline_settings_24</item>
         <item>0</item>
         <item>@drawable/baseline_logout_24</item>
     </array>
 
 
-    <string translatable="false" name="notify_channel_id">MyDefaultChannelID</string>
+    <string name="notify_channel_id" translatable="false">MyDefaultChannelID</string>
 
-    <string translatable="false" name="notify_channel_name">MyDefaultChannelName</string>
+    <string name="notify_channel_name" translatable="false">MyDefaultChannelName</string>
 
-    <string translatable="false" name="notify_channel_description">MyDefaultChannelDescription</string>
+    <string name="notify_channel_description" translatable="false">MyDefaultChannelDescription</string>
+    <string name="set_color">Set Color</string>
+    <string name="upload">Upload</string>
 
 </resources>
