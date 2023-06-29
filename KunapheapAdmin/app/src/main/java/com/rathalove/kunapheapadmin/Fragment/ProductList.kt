@@ -1,27 +1,17 @@
 package com.rathalove.kunapheapadmin.Fragment
 
 import android.app.Dialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
-import android.content.Context.NOTIFICATION_SERVICE
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,15 +23,14 @@ import com.rathalove.kunapheapadmin.Adapter.ItemAdapter
 import com.rathalove.kunapheapadmin.DataModel.AllItemData.AllItemData
 import com.rathalove.kunapheapadmin.DataModel.AllProductData.AllProductData
 import com.rathalove.kunapheapadmin.R
-import com.rathalove.kunapheapadmin.databinding.DashbaordFragmentBinding
+import com.rathalove.kunapheapadmin.databinding.ProductlistFragmentBinding
+import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.LinkedList
-import java.util.Objects
-import java.util.zip.Inflater
 
-class DashBoardFragment: Fragment(), OnclickListener {
+class ProductList: Fragment(), OnclickListener {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,18 +38,19 @@ class DashBoardFragment: Fragment(), OnclickListener {
         savedInstanceState: Bundle?
     ): View? {
 
-        var root: ViewGroup = inflater.inflate(R.layout.dashbaord_fragment, container, false) as ViewGroup
+        var root: ViewGroup = inflater.inflate(R.layout.productlist_fragment, container, false) as ViewGroup
 //        return super.onCreateView(inflater, container, savedInstanceState)
         return root
     }
     private var allItemData: LinkedList<AllItemData> = LinkedList()
     private lateinit var allItemRec: RecyclerView
-    private lateinit var fragmentBinding :DashbaordFragmentBinding
+    private lateinit var fragmentBinding :ProductlistFragmentBinding
     private var allProductData: LinkedList<AllProductData> = LinkedList()
+    private var allProData : LinkedList<AllProductData>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var binding = DashbaordFragmentBinding.bind(view)
+        var binding = ProductlistFragmentBinding.bind(view)
         fragmentBinding = binding
 
         //==========================All Item RecyclerView ================================
@@ -71,18 +61,37 @@ class DashBoardFragment: Fragment(), OnclickListener {
 
         //==========================Notification ================================
 
-//        getAllProductData()
-//        Log.d("testdata = ", "${getAllProductData()}")
-
-
-        getAllDataSycn()
-
-        Log.d("testdata = ", "${getAllDataSycn()}")
 
 
 
 
 
+
+    }
+
+    private fun getAllProductData() {
+        var retrofit = RetrofitClientInstance.getRetrofitInstance().create(RetrofitInterface::class.java)
+        retrofit.getProductData().enqueue(object : Callback<ArrayList<AllProductData>>{
+            override fun onResponse(
+                call: Call<ArrayList<AllProductData>>,
+                response: Response<ArrayList<AllProductData>>
+            ) {
+                if (response.isSuccessful){
+                    for (i in response.body()!!){
+                        allProductData.add(i)
+                    }
+                    allProData = allProductData
+                }
+                else{
+                    Log.d("errorRes", "something went wrong!!")
+                }
+            }
+
+            override fun onFailure(call: Call<ArrayList<AllProductData>>, t: Throwable) {
+                Log.d("fail", "${t.message}")
+            }
+
+        })
     }
 
 
@@ -107,48 +116,51 @@ class DashBoardFragment: Fragment(), OnclickListener {
                             }
                         }
                     }
-                    var itemListAdapter = ItemAdapter(requireContext(), allItemData, this@DashBoardFragment)
+                    var itemListAdapter = ItemAdapter(requireContext(), allItemData, this@ProductList)
                     allItemRec.adapter = itemListAdapter
 
                     //check and push notification
-                    for(i in allItemData){
-                        if (i.itemAmount!!.toInt() <= 3){
-                            Notify.build(requireContext().getApplicationContext())
+//                    for(i in allItemData){
+//                        if (i.itemAmount!!.toInt() <= 3){
+//                            Notify.build(requireContext().getApplicationContext())
+//
+//                                /*
+//                                 * Set notification title and content
+//                                 * */
+//                                .setTitle("Jill Zhao")
+//                                .setContent("Hi! So I meet you today?")
+//
+//                                /*
+//                                 * Set small icon from drawable resource
+//                                 * */
+//                                .setSmallIcon(R.drawable.baseline_notifications_none_24)
+//                                .setColor(R.color.colorAccent)
+//
+//                                /*
+//                                 * Set notification large icon from drawable resource or URL
+//                                 * (make sure you added INTERNET permission to AndroidManifest.xml)
+//                                 * */
+//                                .setLargeIcon("https://images.pexels.com/photos/139829/pexels-photo-139829.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150&w=440")
+//
+//                                /*
+//                                 * Circular large icon
+//                                 * */
+//                                .largeCircularIcon()
+//
+//                                /*
+//                                 * Add a picture from drawable resource or URL
+//                                 * (INTERNET permission needs to be added to AndroidManifest.xml)
+//                                 * */
+//                                .setPicture("https://images.pexels.com/photos/1058683/pexels-photo-1058683.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
+//
+//                                .show(); // Show notification
+//
+//                        }
+//                    }
 
-                                /*
-                                 * Set notification title and content
-                                 * */
-                                .setTitle("Jill Zhao")
-                                .setContent("Hi! So I meet you today?")
-
-                                /*
-                                 * Set small icon from drawable resource
-                                 * */
-                                .setSmallIcon(R.drawable.baseline_notifications_none_24)
-                                .setColor(R.color.colorAccent)
-
-                                /*
-                                 * Set notification large icon from drawable resource or URL
-                                 * (make sure you added INTERNET permission to AndroidManifest.xml)
-                                 * */
-                                .setLargeIcon("https://images.pexels.com/photos/139829/pexels-photo-139829.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150&w=440")
-
-                                /*
-                                 * Circular large icon
-                                 * */
-                                .largeCircularIcon()
-
-                                /*
-                                 * Add a picture from drawable resource or URL
-                                 * (INTERNET permission needs to be added to AndroidManifest.xml)
-                                 * */
-                                .setPicture("https://images.pexels.com/photos/1058683/pexels-photo-1058683.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
-
-                                .show(); // Show notification
-
-                        }
-                    }
-
+                }
+                else{
+                    Log.d("allItem","Data = error")
                 }
             }
 
@@ -192,22 +204,7 @@ class DashBoardFragment: Fragment(), OnclickListener {
 //
 //    }
 
-    private fun getAllDataSycn(): LinkedList<AllProductData>{
-        var retrofit = RetrofitClientInstance.getRetrofitInstance().create(RetrofitInterface::class.java)
-        var data : Call<ArrayList<AllProductData>> = retrofit.getProductData()
-        try {
-            var response :Response<ArrayList<AllProductData>> = data.execute()
-            for (i in response.body()!!){
-                allProductData.add(i)
-            }
-            Log.d("block 1 = " , "$allProductData")
-        }
-        catch (e: Exception){
-            e.printStackTrace()
-        }
-        Log.d("block 2 = " , "$allProductData")
-        return allProductData
-    }
+
 
     override fun noItemClick(pos: Int, data: AllItemData) {
         Toast.makeText(context, "item ${pos+1} clicked", Toast.LENGTH_SHORT).show()
@@ -235,7 +232,43 @@ class DashBoardFragment: Fragment(), OnclickListener {
         var pro_size = dialogBinding.findViewById<TextView>(R.id.size)
         pro_size.text = "Size:  ${size}"
 
+        var imageVw = dialogBinding.findViewById<ImageView>(R.id.product_image_detail)
 
+        //set img
+                    //now we should get data from product for compare
+
+        var retrofit = RetrofitClientInstance.getRetrofitInstance().create(RetrofitInterface::class.java)
+        retrofit.getProductData().enqueue(object : Callback<ArrayList<AllProductData>>{
+
+            override fun onResponse(
+                call: Call<ArrayList<AllProductData>>,
+                response: Response<ArrayList<AllProductData>>
+            ) {
+                if (response.isSuccessful){
+                    Log.d("data", response.body().toString())
+                    for (i in response.body()!!){
+                        allProductData.add(i)
+                    }
+                    for(i in allProductData.indices){
+                        var proId = allProductData[i].productId
+                        Log.d("product_instane", "$proId = $productId")
+                        if(allProductData[i].productId.toString().equals(productId)){
+                            var imgUrl = allProductData[i].item[0].image[0].imageLink.toString()
+                            Picasso.get().load(imgUrl).into(imageVw)
+                            Log.d("product_instane", "dernv ng ot ttt")
+                        }
+
+                    }
+                }
+                else{
+                    Log.d("errorRes", "something went wrong!!")
+                }
+            }
+            override fun onFailure(call: Call<ArrayList<AllProductData>>, t: Throwable) {
+                Log.d("fail", "${t.message}")
+            }
+
+        })
 
         var btn = dialogBinding.findViewById<Button>(R.id.btn_ok)
         btn.setOnClickListener{
